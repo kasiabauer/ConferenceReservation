@@ -3,10 +3,15 @@
     {% block content %}
     <h1>Lista Sal Konferencyjnych: </h1>
     {% for room in room_list %}
-    <h2>{{ room.name }}</h2>
-    <p>{{room.id}}</p>
-    <p>{{room.capacity}}</p>
-    <p>{{room.projector}}</p>
+    <div style="padding: 0.3em 0">
+    <h3><a href="/room/{{ room.id }}">{{ room.name }}</a></h3>
+    <p>Dostępność: wolna</p>
+    <p style="color: #1b1b1b">Pojemność sali: {{room.capacity}}</p>
+    <p>Projektor: {{room.projector}}</p>
+    <span><a href="/room/modify/{{ room.id }}">edytuj</a></span>
+    <span><a href="/room/delete/{{ room.id }}">usuń</a></span>
+    <span><a href="/room/reserve/{{ room.id }}">zarezerwuj</a></span>
+    </div>
     {% endfor %}
     {% endblock %}
 
