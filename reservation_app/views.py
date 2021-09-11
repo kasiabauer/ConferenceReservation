@@ -1,4 +1,4 @@
-from django.shortcuts import render, HttpResponse
+from django.shortcuts import render, HttpResponse, redirect
 from .models import ConfRoom
 from django.template.response import TemplateResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -12,10 +12,25 @@ def new_room(request):
     if request.method == 'POST':
         room_name = request.POST.get('room-name')
         room_capacity = request.POST.get('room-capacity')
+        room_has_projector = request.POST.get('room-projector') == 'on'
         if room_name == '':
             return TemplateResponse(request, 'new-room-form-name-error.html')
         elif room_capacity == '' or int(room_capacity) < 0:
             return TemplateResponse(request, 'new-room-form-capacity-error.html')
-        # dopisz: if'a czy stala już istnieje w bazie
+        elif ConfRoom.objects.filter(name=room_name).first():
+            return TemplateResponse(request, 'new-room-form-duplicate-name.html')
+        # dopisz: if'a czy sala już istnieje w bazie
         else:
-            return HttpResponse(request, 'new-room-form.html')
+            ConfRoom.objects.create(name=room_name, capacity=room_capacity, projector_availability=room_has_projector)
+            return redirect('room-list')
+
+
+def room_list(request):
+    room_list = []
+    for conf_room in ConfRoom.objects.all():
+        room = {'id': conf_room.id, 'name': conf_room.name, 'capacity': conf_room.capacity, 'projector': conf_room.projector_availability}
+        room_list.append(room)
+    ctx = {
+        'room_list': room_list
+    }
+    return TemplateResponse(request, 'room-list.html', ctx)

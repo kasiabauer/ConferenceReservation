@@ -1,24 +1,21 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Dodaj Nową Salę - Formularz</title>
-</head>
-<body>
+{% extends 'base.html' %}
+
+
+{% block content %}
     <h1>Dodaj salę konferencyjną</h1>
-    <form action="/room/new" method="post">
+    <form action="" method="post">
         <label>Nazwa Sali Konferencyjnej:
-            <input name="room-name" type="text">
+            <input name="room-name" placeholder="Nazwa Sali" type="text">
         </label>
         <br />
         <label>Pojemność sali
             <input name="room-capacity" type="number">
         </label>
         <br />
+        <label>Sala posiada projektor:
+            <input name="room-projector" type="checkbox">
+        </label>
+        <br />
         <button type="submit">Wyślij</button>
     </form>
-{% block content %}
-
 {% endblock %}
-</body>
-</html>

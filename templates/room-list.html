@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+    {% block content %}
+    <h1>Lista Sal Konferencyjnych: </h1>
+    {% for room in room_list %}
+    <h2>{{ room.name }}</h2>
+    <p>{{room.id}}</p>
+    <p>{{room.capacity}}</p>
+    <p>{{room.projector}}</p>
+    {% endfor %}
+    {% endblock %}
+
