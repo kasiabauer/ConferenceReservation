@@ -11,6 +11,7 @@
         <label>Podaj datę rezerwacji:
         <input type="date" id="reservation-date" name="reservation-date" max="3000-12-31" min="1000-01-01">
         </label>
+        <span style="color: orangered">{{ error_message}}</span>
         <br />
         <label>Komentarz do rezerwacji:
             <input name="reservation-comment" type="text" maxlength="1000">

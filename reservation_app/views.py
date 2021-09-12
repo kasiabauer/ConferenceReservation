@@ -2,8 +2,10 @@ from django.shortcuts import render, HttpResponse, redirect, get_object_or_404
 from .models import ConfRoom, RoomReservation
 from django.template.response import TemplateResponse
 from django.views.decorators.csrf import csrf_exempt
+from datetime import date
 # Create your views here.
 
+TODAY = str(date.today())
 
 @csrf_exempt
 def new_room(request):
@@ -52,6 +54,14 @@ def room_details(request, room_id):
     ctx = {
         'room_details': room
     }
+    current_reservations = RoomReservation.objects.filter(conf_room=room_id)
+    reservations = {}
+    for reservation in current_reservations:
+        reservations = {
+            'date': reservation.date,
+            'comment': reservation.comment
+        }
+    ctx['reservations'] = reservations
     return TemplateResponse(request, 'room-details.html', ctx)
 
 
@@ -99,23 +109,37 @@ def room_modify(request, room_id):
 
 @csrf_exempt
 def room_reserve(request, room_id):
-    if request.method == 'GET':
-        search_action = ConfRoom.objects.filter(pk=room_id)
-        room = {}
-        for room_details in search_action:
-            room = {
-                'id': room_details.id,
-                'name': room_details.name,
-                'capacity': room_details.capacity,
-                'projector': room_details.projector_availability
-            }
-        ctx = {
-            'room': room
+    # Fetch conf room data
+    search_action = ConfRoom.objects.filter(pk=room_id)
+    room = {}
+    for room_details in search_action:
+        room = {
+            'id': room_details.id,
+            'name': room_details.name,
+            'capacity': room_details.capacity,
+            'projector': room_details.projector_availability
         }
+    ctx = {
+        'room': room
+    }
+    # Display form
+    if request.method == 'GET':
         return TemplateResponse(request, 'room-reservation.html', ctx)
     elif request.method == "POST":
         my_room = get_object_or_404(ConfRoom, pk=room_id)
         reserve_date = request.POST.get('reservation-date')
+
+        # Error handling for old date
+        if reserve_date < TODAY:
+            ctx['error_message'] = 'Wybrana data jest z przeszłości'
+            return TemplateResponse(request, 'room-reservation.html', ctx)
+
+        # Error handling for already reserved conf room
+        if RoomReservation.objects.filter(conf_room=room_id, date=reserve_date):
+            ctx['error_message'] = 'Sala jest zajęta w tym terminie.'
+            return TemplateResponse(request, 'room-reservation.html', ctx)
+
+        # Adding reservation to database
         reserve_comment = request.POST.get('reservation-comment')
         RoomReservation.objects.create(conf_room=my_room, date=reserve_date, comment=reserve_comment)
         return redirect('/room/list')
