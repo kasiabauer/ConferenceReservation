@@ -1,4 +1,4 @@
-from django.shortcuts import render, HttpResponse, redirect
+from django.shortcuts import render, HttpResponse, redirect, get_object_or_404
 from .models import ConfRoom, RoomReservation
 from django.template.response import TemplateResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -15,8 +15,13 @@ def new_room(request):
         room_has_projector = request.POST.get('room-projector') == 'on'
         if room_name == '':
             return TemplateResponse(request, 'new-room-form-name-error.html')
-        elif room_capacity == '' or int(room_capacity) < 0:
-            return TemplateResponse(request, 'new-room-form-capacity-error.html')
+        elif room_capacity == '' or int(room_capacity) <= 0:
+            ctx = {
+                'error_message': 'Podaj pojemność (musi być większe niż zero).'
+            }
+            return TemplateResponse(request, 'new-room-form.html', ctx)
+            # return HttpResponse('Podaj pojemność (musi być większe niż zero).'
+            # return TemplateResponse(request, 'new-room-form-capacity-error.html')
         elif ConfRoom.objects.filter(name=room_name).first():
             return TemplateResponse(request, 'new-room-form-duplicate-name.html')
         # dopisz: if'a czy sala już istnieje w bazie
@@ -109,7 +114,8 @@ def room_reserve(request, room_id):
         }
         return TemplateResponse(request, 'room-reservation.html', ctx)
     elif request.method == "POST":
+        my_room = get_object_or_404(ConfRoom, pk=room_id)
         reserve_date = request.POST.get('reservation-date')
         reserve_comment = request.POST.get('reservation-comment')
-        RoomReservation.objects.create(room_id_id=room_id, date=reserve_date, comment=reserve_comment)
+        RoomReservation.objects.create(conf_room=my_room, date=reserve_date, comment=reserve_comment)
         return redirect('/room/list')

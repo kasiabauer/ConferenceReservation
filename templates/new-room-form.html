@@ -3,6 +3,7 @@
 
 {% block content %}
     <h1>Dodaj salę konferencyjną</h1>
+
     <!--form-->
     <form action="" method="post">
         <label>Nazwa Sali Konferencyjnej:
@@ -12,6 +13,7 @@
         <label>Pojemność sali
             <input name="room-capacity" type="number">
         </label>
+        <span style="color: orangered">{{error_message}}</span>
         <br />
         <label>Sala posiada projektor:
             <input name="room-projector" type="checkbox">
