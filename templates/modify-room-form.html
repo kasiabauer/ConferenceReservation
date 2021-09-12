@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+    <h1>Edytuj salę konferencyjną {{room.name}}</h1>
+    <!--form-->
+    <form action="" method="post">
+        <label>Nowa Sali Konferencyjnej:
+            <input name="room-name" placeholder="{{room.name}}" type="text">
+        </label>
+        <br />
+        <label>Nowa Pojemność sali
+            <input name="room-capacity" placeholder="{{room.capacity}}" type="number">
+        </label>
+        <br />
+        <label>Czy sala posiada projektor?:
+            <input name="room-projector" placeholder="{{room.projector}}" type="checkbox">
+        </label>
+        <br />
+        <button type="submit">Wyślij</button>
+    </form>
+{% endblock %}
