@@ -1,5 +1,5 @@
 from django.shortcuts import render, HttpResponse, redirect
-from .models import ConfRoom
+from .models import ConfRoom, RoomReservation
 from django.template.response import TemplateResponse
 from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
@@ -61,6 +61,7 @@ def room_delete(request, room_id):
     return redirect('/room/list', ctx_message)
 
 
+@csrf_exempt
 def room_modify(request, room_id):
     if request.method == 'GET':
         search_action = ConfRoom.objects.filter(pk=room_id)
@@ -76,3 +77,39 @@ def room_modify(request, room_id):
             'room': room
         }
         return TemplateResponse(request, 'modify-room-form.html', ctx)
+    if request.method == 'POST':
+        new_room_name = request.POST.get('room-name')
+        new_room_capacity = request.POST.get('room-capacity')
+        new_room_projector = request.POST.get('room-projector') == 'on'
+        if int(new_room_capacity) > 0 and new_room_name:
+            for room in ConfRoom.objects.filter(pk=room_id):
+                room.name = new_room_name
+                room.capacity = new_room_capacity
+                room.projector_availability = new_room_projector
+                room.save()
+            return redirect('/room/list')
+        else:
+            return TemplateResponse(request, 'modify-room-form-capacity-error.html')
+
+
+@csrf_exempt
+def room_reserve(request, room_id):
+    if request.method == 'GET':
+        search_action = ConfRoom.objects.filter(pk=room_id)
+        room = {}
+        for room_details in search_action:
+            room = {
+                'id': room_details.id,
+                'name': room_details.name,
+                'capacity': room_details.capacity,
+                'projector': room_details.projector_availability
+            }
+        ctx = {
+            'room': room
+        }
+        return TemplateResponse(request, 'room-reservation.html', ctx)
+    elif request.method == "POST":
+        reserve_date = request.POST.get('reservation-date')
+        reserve_comment = request.POST.get('reservation-comment')
+        RoomReservation.objects.create(room_id_id=room_id, date=reserve_date, comment=reserve_comment)
+        return redirect('/room/list')

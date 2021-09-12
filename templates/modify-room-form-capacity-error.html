@@ -3,6 +3,8 @@
 {% block content %}
     <h1>Edytuj salę konferencyjną {{room.name}}</h1>
     <!--form-->
+    <span style="color: orangered">Pojemność sali nie może być zerem</span><br />
+    <span style="color: orangered">Podaj nazwę sali.</span>
     <form action="" method="post">
         <label>Nowa Sali Konferencyjnej:
             <input name="room-name" placeholder="{{room.name}}" type="text">

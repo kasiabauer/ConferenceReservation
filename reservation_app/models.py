@@ -10,3 +10,12 @@ class ConfRoom(models.Model):
 
     def __str__(self):
         return f'{self.name}'
+
+
+class RoomReservation(models.Model):
+    room_id = models.ForeignKey(ConfRoom, primary_key=True, on_delete=models.CASCADE)
+    date = models.DateField()
+    comment = models.CharField(max_length=1000, null=True)
+
+    class Meta:
+        unique_together = ('room_id', 'date')

@@ -6,16 +6,17 @@
 </head>
 <body>
     <!--nav-->
-    <div>Menu
-        <div>Home</div>
-        <div><a href="/room/list">Lista Sal</a></div>
-        <div><a href="/room/new"> Dodaj Nową Salę</a></div>
+    <div style="background-color: #999999; color: white; font-size:1.2em">Menu:
+        <span style="padding: 0 0.5em"><a style="color:white;" href="/room/list">Lista Sal</a></span>
+        <span style="padding: 0 0.5em"><a style="color:white;" href="/room/new"> Dodaj Nową Salę</a></span>
     </div>
     <!--content-->
+    <div>
     {% block content %}
 
     {% endblock %}
     <!--footer-->
+    </div>
     <div style="padding-top: 5em;">@2021 - Kasia Bauer</div>
 </body>
 </html>

@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+    <h1>Rezerwuj salę konferencyjną {{room.name}}</h1>
+    <!--form-->
+    <span>Rezerwujesz salę: <strong>{{room.name}}</strong></span><br />
+    <span>O pojemności: <strong>{{room.capacity}}</strong></span><br />
+    <span >Projektor: <strong>{{room.projector}}</strong></span><br />
+    <form style="margin-top: 1em" action="" method="post">
+        <label>Podaj datę rezerwacji:
+        <input type="date" id="reservation-date" name="reservation-date" max="3000-12-31" min="1000-01-01">
+        </label>
+        <br />
+        <label>Komentarz do rezerwacji:
+            <input name="reservation-comment" type="text" maxlength="1000">
+        </label>
+        <br />
+        <button type="submit">Wyślij</button>
+    </form>
+{% endblock %}
