@@ -34,3 +34,17 @@ def room_list(request):
         'room_list': room_list
     }
     return TemplateResponse(request, 'room-list.html', ctx)
+
+
+def room_details(request, room_id):
+    current_room = ConfRoom.objects.filter(pk=room_id)
+    room = {}
+    for room_data in current_room:
+        room = {'id': room_data.id,
+                'name': room_data.name,
+                'capacity': room_data.capacity,
+                'projector': room_data.projector_availability}
+    ctx = {
+        'room_details': room
+    }
+    return TemplateResponse(request, 'room-details.html', ctx)

@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+    {% block content %}
+    <h1>Sala Konferencyjna: {{ room_details.name }} </h1>
+    <div style="padding: 0.3em 0">
+    <p>Dostępność: wolna</p>
+    <p style="color: #1b1b1b">Pojemność sali: {{room_details.capacity}}</p>
+    <p>Projektor: {{room_details.projector}}</p>
+    <span><a href="/room/modify/{{ room_details.id }}">edytuj</a></span>
+    <span><a href="/room/delete/{{ room_details.id }}">usuń</a></span>
+    <span><a href="/room/reserve/{{ room_details.id }}">zarezerwuj</a></span>
+    </div>
+    {% endblock %}
+
