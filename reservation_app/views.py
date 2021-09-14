@@ -6,6 +6,10 @@ from datetime import date
 # Create your views here.
 
 TODAY = str(date.today())
+PROJECTOR_AVAILABILITY = {
+    'yes': 'dostępny',
+    'no': 'niedostępny'
+}
 
 @csrf_exempt
 def new_room(request):
@@ -33,13 +37,37 @@ def new_room(request):
 
 
 def room_list(request):
-    room_list = []
+    detailed_room_list = []
     for conf_room in ConfRoom.objects.all():
-        room = {'id': conf_room.id, 'name': conf_room.name, 'capacity': conf_room.capacity, 'projector': conf_room.projector_availability}
-        room_list.append(room)
+        # checking project availability and setting to polish
+        if conf_room.projector_availability:
+            projector = PROJECTOR_AVAILABILITY['yes']
+        else:
+            projector = PROJECTOR_AVAILABILITY['no']
+        # setting reservation status not working yet :)
+        # reservations = RoomReservation.objects.filter(conf_room_id=conf_room.id)
+        # reservation_dates = RoomReservation.objects.filter(conf_room_id=conf_room.id)
+        # conf_room_reserved = TODAY in reservation_dates
+        #
+        # for item in reservation_date:
+        #     if str(item.date) == TODAY:
+        #         status = 'niedostępna'
+        #     else:
+        #         status = 'dostępna'
+        #     print(status)
+        # preparing data
+        room = {
+            'id': conf_room.id,
+            'name': conf_room.name,
+            'capacity': conf_room.capacity,
+            'projector': projector,
+            'availability_today': conf_room_reserved
+        }
+        detailed_room_list.append(room)
     ctx = {
-        'room_list': room_list
+        'room_list': detailed_room_list
     }
+    RoomReservation.objects.first()
     return TemplateResponse(request, 'room-list.html', ctx)
 
 
@@ -47,21 +75,20 @@ def room_details(request, room_id):
     current_room = ConfRoom.objects.filter(pk=room_id)
     room = {}
     for room_data in current_room:
+        # change projector availability to polish
+        if room_data.projector_availability:
+            projector = PROJECTOR_AVAILABILITY['yes']
+        else:
+            projector = PROJECTOR_AVAILABILITY['no']
         room = {'id': room_data.id,
                 'name': room_data.name,
                 'capacity': room_data.capacity,
-                'projector': room_data.projector_availability}
+                'projector': projector}
     ctx = {
         'room_details': room
     }
     current_reservations = RoomReservation.objects.filter(conf_room=room_id)
-    reservations = {}
-    for reservation in current_reservations:
-        reservations = {
-            'date': reservation.date,
-            'comment': reservation.comment
-        }
-    ctx['reservations'] = reservations
+    ctx['reservations'] = current_reservations
     return TemplateResponse(request, 'room-details.html', ctx)
 
 

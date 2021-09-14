@@ -9,12 +9,10 @@
     <span><a href="/room/modify/{{ room_details.id }}">edytuj</a></span>
     <span><a href="/room/delete/{{ room_details.id }}">usuń</a></span>
     <span><a href="/room/reserve/{{ room_details.id }}">zarezerwuj</a></span>
-    <p>Rezerwacje: </p>
-    <span>pokaż słownik: {{reservations}}</span><br />
-    <span>pokaż wyniki loopa:</span><br />
+    <h2>Rezerwacje: </h2>
     {% for reservation in reservations %}
-    <span>{{reservation.date}}</span>
-    <span>{{reservation.comment}}</span>
+    <span>data: {{ reservation.date }}</span>
+    <span>komentarz: {{ reservation.comment }}</span>
     <br />
     {% endfor %}
     </div>
