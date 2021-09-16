@@ -11,6 +11,7 @@ PROJECTOR_AVAILABILITY = {
     'no': 'niedostępny'
 }
 
+
 @csrf_exempt
 def new_room(request):
     if request.method == "GET":
@@ -44,24 +45,22 @@ def room_list(request):
             projector = PROJECTOR_AVAILABILITY['yes']
         else:
             projector = PROJECTOR_AVAILABILITY['no']
-        # setting reservation status not working yet :)
-        # reservations = RoomReservation.objects.filter(conf_room_id=conf_room.id)
-        # reservation_dates = RoomReservation.objects.filter(conf_room_id=conf_room.id)
-        # conf_room_reserved = TODAY in reservation_dates
-        #
-        # for item in reservation_date:
-        #     if str(item.date) == TODAY:
-        #         status = 'niedostępna'
-        #     else:
-        #         status = 'dostępna'
-        #     print(status)
-        # preparing data
+
+        # setting reservation status
+        reservation_dates = \
+            [str(reservation.date) for reservation in RoomReservation.objects.filter(conf_room_id=conf_room.id)]
+
+        if TODAY in reservation_dates:
+            status = 'niedostępna'
+        else:
+            status = 'dostępna'
+
         room = {
             'id': conf_room.id,
             'name': conf_room.name,
             'capacity': conf_room.capacity,
             'projector': projector,
-            'availability_today': conf_room_reserved
+            'availability_today': status
         }
         detailed_room_list.append(room)
     ctx = {
@@ -149,6 +148,17 @@ def room_reserve(request, room_id):
     ctx = {
         'room': room
     }
+
+    # Fetch reservation data
+    reservation_list = RoomReservation.objects.filter(conf_room=room_id)
+    reservations = {}
+    for reservation in reservation_list:
+        reservations = {
+            'date': reservation.date,
+            'comment': reservation.comment
+        }
+    ctx['reservations']: reservations
+
     # Display form
     if request.method == 'GET':
         return TemplateResponse(request, 'room-reservation.html', ctx)
@@ -169,4 +179,5 @@ def room_reserve(request, room_id):
         # Adding reservation to database
         reserve_comment = request.POST.get('reservation-comment')
         RoomReservation.objects.create(conf_room=my_room, date=reserve_date, comment=reserve_comment)
+
         return redirect('/room/list')
